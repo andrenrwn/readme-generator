@@ -1,0 +1,66 @@
+--- Process 41724 created
+--- Process 41724 loaded C:\Windows\System32\ntdll.dll at 00007ffcdd5f0000
+--- Process 41724 loaded C:\Windows\System32\kernel32.dll at 00007ffcdcc00000
+--- Process 41724 loaded C:\Program Files\AVAST Software\Avast\aswhook.dll at 00007ffcabf20000
+--- Process 41724 loaded C:\Windows\System32\KernelBase.dll at 00007ffcdacd0000
+--- Process 41724 thread 10032 created
+--- Process 41724 loaded C:\Windows\System32\ws2_32.dll at 00007ffcdc850000
+--- Process 41724 loaded C:\Windows\System32\rpcrt4.dll at 00007ffcdbbe0000
+--- Process 41724 thread 32584 created
+--- Process 41724 loaded C:\Windows\System32\dbghelp.dll at 00007ffcd0710000
+--- Process 41724 thread 16888 created
+--- Process 41724 loaded C:\Windows\System32\ole32.dll at 00007ffcdc670000
+--- Process 41724 loaded C:\Windows\System32\ucrtbase.dll at 0000026f63a10000
+--- Process 41724 unloaded DLL at 0000026f63a10000
+--- Process 41724 loaded C:\Windows\System32\ucrtbase.dll at 00007ffcdafd0000
+--- Process 41724 loaded C:\Windows\System32\ucrtbase.dll at 0000026f63a10000
+--- Process 41724 unloaded DLL at 0000026f63a10000
+--- Process 41724 loaded C:\Windows\System32\combase.dll at 00007ffcdb650000
+--- Process 41724 loaded C:\Windows\System32\gdi32.dll at 00007ffcdd580000
+--- Process 41724 loaded C:\Windows\System32\win32u.dll at 00007ffcdb430000
+--- Process 41724 loaded C:\Windows\System32\gdi32full.dll at 00007ffcdb310000
+--- Process 41724 loaded C:\Windows\System32\msvcp_win.dll at 00007ffcdb0d0000
+--- Process 41724 loaded C:\Windows\System32\user32.dll at 00007ffcdd310000
+--- Process 41724 loaded C:\Windows\System32\psapi.dll at 00007ffcdbd10000
+--- Process 41724 loaded C:\Windows\System32\shell32.dll at 00007ffcdbd20000
+--- Process 41724 loaded C:\Windows\System32\IPHLPAPI.DLL at 00007ffcda0d0000
+--- Process 41724 loaded C:\Windows\System32\advapi32.dll at 00007ffcdb9b0000
+--- Process 41724 loaded C:\Windows\System32\userenv.dll at 00007ffcdabc0000
+--- Process 41724 loaded C:\Windows\System32\msvcrt.dll at 00007ffcdbac0000
+--- Process 41724 loaded C:\Windows\System32\sechost.dll at 00007ffcdcb50000
+--- Process 41724 loaded C:\Windows\System32\crypt32.dll at 00007ffcdb460000
+--- Process 41724 loaded C:\Windows\System32\bcrypt.dll at 00007ffcdb2e0000
+--- Process 41724 loaded C:\Windows\System32\winmm.dll at 00007ffccdd00000
+--- Process 41724 loaded C:\Windows\System32\dbgcore.dll at 00007ffcd0680000
+--- Process 41724 loaded C:\Windows\System32\cryptbase.dll at 00007ffcda5a0000
+--- Process 41724 loaded C:\Windows\System32\imm32.dll at 00007ffcdccc0000
+--- Process 41724 loaded C:\Windows\System32\powrprof.dll at 00007ffcda1e0000
+--- Process 41724 loaded C:\Windows\System32\umpdc.dll at 00007ffcda0b0000
+--- Process 41724 loaded C:\Windows\System32\uxtheme.dll at 00007ffcd8670000
+--- Process 41724 loaded C:\Windows\System32\mswsock.dll at 00007ffcda410000
+--- Process 41724 thread 21536 created
+--- Process 41724 thread 32480 created
+--- Process 41724 thread 39344 created
+--- Process 41724 loaded C:\Windows\System32\bcryptprimitives.dll at 00007ffcdb5c0000
+--- Process 41724 thread 2136 created
+--- Process 41724 loaded C:\Windows\System32\kernel.appcore.dll at 00007ffcd8a60000
+--- Process 41724 thread 9748 created
+--- Process 41724 thread 1144 created
+--- Process 41724 thread 20296 created
+--- Process 41724 thread 17440 created
+--- Process 41724 thread 22736 created
+--- Process 41724 thread 3652 created
+--- Process 41724 thread 2136 exited with status 0x0
+--- Process 41724 thread 1144 exited with status 0x0
+--- Process 41724 thread 9748 exited with status 0x0
+--- Process 41724 thread 20296 exited with status 0x0
+--- Process 41724 thread 17440 exited with status 0x0
+--- Process 41724 thread 22736 exited with status 0x0
+--- Process 41724 thread 32480 exited with status 0x0
+--- Process 41724 thread 3652 exited with status 0x0
+--- Process 41724 thread 10032 exited with status 0x0
+--- Process 41724 thread 16888 exited with status 0x0
+--- Process 41724 thread 32584 exited with status 0x0
+--- Process 41724 thread 21536 exited with status 0x0
+--- Process 41724 thread 39344 exited with status 0x0
+--- Process 41724 exited with status 0x0
