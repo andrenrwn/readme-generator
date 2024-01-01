@@ -61,6 +61,7 @@ function generateMD({ description, toc, installation, usage, license, contributi
   return MDsection1 + toccontent + MDsection2;
 }
 
+<<<<<<< HEAD
 const showMenu = () => {
   const questions = [
     {
@@ -97,13 +98,19 @@ let main = async () => {
 
 main();
 
+=======
+>>>>>>> 1ed4bd9535f2bd68ddf85e100839e5f0cc2202da
 //We need to enter description, toc, installation, usage, license, contributing, tests, questions
 inquirer
   .prompt([
     {
       type: "input",
       name: "description",
+<<<<<<< HEAD
       message: "\ndescription?\n",
+=======
+      message: "description?",
+>>>>>>> 1ed4bd9535f2bd68ddf85e100839e5f0cc2202da
     },
     {
       type: "input",
