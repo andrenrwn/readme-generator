@@ -1,19 +1,29 @@
 // --------------------------------------------------------------------
-// This is a client text user interface example to the ecommerce DB API
+// This is a readme generator
 // Dependencies:
 //   blessed
 // Install:
 //   $npm install
-//   Start the ecommerce DB API server: $npm run start
+//   $npm run start
 //
 // Usage:
-//   Set the APIURL to your server's URL
-//   $node tui.js
+// Use the options to enter readme components
 // --------------------------------------------------------------------
 
-let blessed = require('neo-blessed'),
-    // contrib = require('blessed-contrib'),
-    screen = blessed.screen();
+
+let inquirer = require("inquirer");
+
+let blessed = require("blessed");
+// let blessed = require('neo-blessed'),   // you can use 'neo-blessed' or 'blessed' depending on your preference
+//     // contrib = require('blessed-contrib'),
+// screen = blessed.screen();
+let screen = new blessed.screen();
+
+
+let readmecontent = {
+
+};
+
 
 const APIURL = 'http://localhost:3001';
 
@@ -74,7 +84,7 @@ const box = blessed.box({
     right: '0',
     width: '65%',
     height: '100%-2',
-    content: '{bold}e-commerce API client side user interface example{/bold}',
+    content: '{bold}README generator{/bold}',
     tags: true,
     shadow: true,
     scrollable: true,
@@ -106,6 +116,115 @@ const box = blessed.box({
     }
 });
 
+class Separator {
+    constructor() {
+        this.name = "------------------"
+        this.value = "------------------"
+        this.description = "------------------"
+    };
+};
+
+// Menu Choices in inquirer format
+let choices = [
+    {
+        name: "display",
+        value: "display",
+        description: "Display current README content",
+    },
+    new Separator(), // common sections in README files
+    {
+        name: "title",
+        value: "title",
+        description: "Enter the title of your application",
+    },
+    {
+        name: "description",
+        value: "description",
+        description: "Enter a description of your project",
+    },
+    {
+        name: "installation",
+        value: "installation",
+        description: "Document how users can install your application",
+    },
+    {
+        name: "usage",
+        value: "usage",
+        description: "Document how your application is used",
+    },
+    {
+        name: "license",
+        value: "license",
+        description: "Choose or create the license for your application",
+    },
+    {
+        name: "contributing",
+        value: "contributing",
+        description: "Enter guidelines on contributing to this project",
+    },
+    {
+        name: "tests",
+        value: "tests",
+        description: "Enter testing details",
+    },
+    {
+        name: "questions",
+        value: "questions",
+        description: "Enter frequently asked questions",
+    },
+    new Separator(), // uncommon sections
+    {
+        name: "repository",
+        value: "repository",
+        description: "Specify your Github repository",
+    },
+    {
+        name: "logo",
+        value: "logo",
+        description: "Specify a logo for your application",
+    },
+    {
+        name: "dependencies",
+        value: "dependencies",
+        description: "Read the dependencies of your application from package.json",
+    },
+    {
+        name: "section",
+        value: "section",
+        description: "Add a section to your README file",
+    },
+    new Separator(),
+    {
+        name: "edit",
+        value: "edit",
+        description: "Edit the text for your README",
+    },
+    {
+        name: "reset",
+        value: "reset",
+        description: "Reset your README",
+    },
+    {
+        name: "save",
+        value: "save",
+        description: "Save your work into a file",
+    },
+    {
+        name: "quit",
+        value: "quit",
+        description: "Quit this program",
+    },
+];
+
+let flatchoices = choices.map((elem) => {
+    console.log(elem.name);
+    return elem.value;
+});
+
+// let flatchoices = ['a','b','c'];
+
+//console.log("FLAT CHOICES:", flatchoices);
+
 // Side Menu
 const sideMenu = blessed.list({
     parent: desktop, // Can't capture events if we use screen.append(sideMenu)
@@ -114,7 +233,7 @@ const sideMenu = blessed.list({
     height: '100%-2',
     width: '35%',
     keys: true,
-    items: ['(p)roducts', '(c)ategories', '(t)ags', '(q)uit'],
+    items: flatchoices,
     shadow: true,
     border: {
         type: 'line'
@@ -206,40 +325,41 @@ function displayAlert(err) {
 };
 
 sideMenu.on('select', (async function (item, selected) {
-    // box.setContent(`got an enter/select event',\nindex: ${this.selected} / ${selected};\nvalue: ${this.items[this.selected].content} / ${item.content}`);
-    switch (this.selected) {
-        case 0:
-            let products;
-            try {
-                products = await fetchProducts();
-            } catch (err) {
-                displayAlert(err);
-            };
-            displayContent(products);
-            break;
-        case 1:
-            let categories;
-            try {
-                categories = await fetchCategories();
-            } catch (err) {
-                displayAlert(err);
-            };
-            displayContent(categories);
-            break;
-        case 2:
-            let tags;
-            try {
-                tags = await fetchTags();
-            } catch (err) {
-                displayAlert(err);
-            };
-            displayContent(tags);
-            break;
-        case 3:
-            return process.exit(0);
-            break;
-        default:
-    };
+    //box.setContent(`got an enter/select event',\nindex: ${this.selected} / ${selected};\nvalue: ${this.items[this.selected].content} / ${item.content}`);
+    await displayAlert(`got an enter/select event',\nindex: ${this.selected} / ${selected};\nvalue: ${this.items[this.selected].content} / ${item.content}`);
+    // switch (this.selected) {
+    //     case 0:
+    //         let products;
+    //         try {
+    //             products = await fetchProducts();
+    //         } catch (err) {
+    //             displayAlert(err);
+    //         };
+    //         displayContent(products);
+    //         break;
+    //     case 1:
+    //         let categories;
+    //         try {
+    //             categories = await fetchCategories();
+    //         } catch (err) {
+    //             displayAlert(err);
+    //         };
+    //         displayContent(categories);
+    //         break;
+    //     case 2:
+    //         let tags;
+    //         try {
+    //             tags = await fetchTags();
+    //         } catch (err) {
+    //             displayAlert(err);
+    //         };
+    //         displayContent(tags);
+    //         break;
+    //     case 3:
+    //         return process.exit(0);
+    //         break;
+    //     default:
+    // };
     // console.log(
     //     'got an enter/select event',
     //     'index: ', this.selected, '/', selected, ';',
@@ -279,12 +399,12 @@ box.key(["tab"], function () {
 
 box.key(["pagedown"], function () {
     //console.log("pagedown");
-    box.scroll(parseInt(this.height/2));
+    box.scroll(parseInt(this.height / 2));
     screen.render();
 });
 
 box.key(["pageup"], function () {
-    this.scroll(-parseInt(this.height/2));
+    this.scroll(-parseInt(this.height / 2));
     screen.render();
 });
 
