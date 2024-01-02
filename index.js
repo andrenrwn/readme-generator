@@ -319,8 +319,9 @@ let flatchoices = choices.map((elem) => {
     return elem.name;
 });
 
-
-// Side Menu
+// -----------------------------------------------------------------------
+// Side Menu. This is the main menu.
+// -----------------------------------------------------------------------
 const sideMenu = blessed.list({
     parent: desktop, // Can't capture events if we use screen.append(sideMenu)
     left: '0',
@@ -356,7 +357,9 @@ const sideMenu = blessed.list({
 });
 
 
-// Right side box
+// -----------------------------------------------------------------------
+// Form window. This is where the user edits sections.
+// -----------------------------------------------------------------------
 const formwindow = blessed.form({
     top: '2',
     right: '0',
@@ -395,7 +398,7 @@ const formwindow = blessed.form({
 });
 
 
-// title input
+// Section title input
 var formsectiontitle = blessed.textbox({
     parent: formwindow,
     name: 'title',
@@ -416,7 +419,7 @@ var formsectiontitle = blessed.textbox({
     }
 });
 
-// text editor
+// Section body text are editor
 var formsectioneditor = blessed.textarea({
     parent: formwindow,
     name: 'editor',
@@ -437,7 +440,7 @@ var formsectioneditor = blessed.textarea({
     }
 });
 
-// Submit/Cancel buttons
+// Form Submit/Cancel buttons
 var formsubmit = blessed.button({
     parent: formwindow,
     name: 'submit',
@@ -460,10 +463,11 @@ var formsubmit = blessed.button({
         }
     }
 });
+// Reset/clear form data
 var formreset = blessed.button({
     parent: formwindow,
     name: 'reset',
-    content: 'Reset',
+    content: 'Clear',
     bottom: 0,
     left: 15,
     shrink: true,
@@ -482,6 +486,52 @@ var formreset = blessed.button({
         }
     }
 });
+// Populate form data to default values
+var formdefault = blessed.button({
+    parent: formwindow,
+    name: 'default',
+    content: 'Erase to Default',
+    bottom: 0,
+    left: 27,
+    shrink: true,
+    padding: {
+        top: 1,
+        right: 2,
+        bottom: 1,
+        left: 2
+    },
+    style: {
+        bold: true,
+        fg: 'white',
+        bg: 'red',
+        focus: {
+            inverse: true
+        }
+    }
+});
+// Checkbox to indicate if section is enabled
+var formenabledcheckbox = blessed.checkbox({
+    parent: formwindow,
+    name: 'enabled',
+    content: 'Enabled',
+    bottom: 0,
+    right: 2,
+    shrink: true,
+    padding: {
+        top: 1,
+        right: 2,
+        bottom: 1,
+        left: 2
+    },
+    style: {
+        bold: true,
+        fg: 'white',
+        bg: 'black',
+        focus: {
+            inverse: true
+        }
+    }
+});
 
 var msg = blessed.message({
     parent: screen,
@@ -494,12 +544,24 @@ var msg = blessed.message({
 });
 
 // Form Event management
+// submit form
 formsubmit.on('press', function () {
     formwindow.submit();
 });
+// clear all form entries
 formreset.on('press', function () {
     formwindow.reset();
 });
+// erase all form entries and set them to default
+formdefault.on('press', function () {
+    formwindow.reset();
+    formsectiontitle.setValue(readmetemplate[formwindow.data.sectionbeingedited].name);
+    formsectioneditor.setValue(readmetemplate[formwindow.data.sectionbeingedited].description);
+    formsectiontitle.render();
+    formsectioneditor.render();
+    screen.render();
+});
+
 formwindow.on('submit', function (data) {
     // console.log(data);
     // msg.display(`Value: ${data.sectionbeingedited} ${this.name}, Title: ${data.title}, Content: ${data.editor} \n`, function () {
@@ -511,6 +573,7 @@ formwindow.on('submit', function (data) {
     // console.log(formwindow.data.sectionbeingedited);
     readmeContent[formwindow.data.sectionbeingedited].name = data.title;
     readmeContent[formwindow.data.sectionbeingedited].description = data.editor;
+    readmeContent[formwindow.data.sectionbeingedited].value = formenabledcheckbox.checked;
     box.setContent(generateReadme());
     formwindow.hide();
     sideMenu.focus();
@@ -559,7 +622,9 @@ const alertbox = blessed.question({
 });
 
 
-// Licenses table
+// -----------------------------------------------------------------------
+// License selection table
+// -----------------------------------------------------------------------
 const licensetable = blessed.listtable({
     top: 'center',
     left: 'center',
@@ -613,7 +678,6 @@ licenses.forEach(elem => {
 
 licensetable.setData(licensearray);
 
-
 licensetable.key(["pagedown"], function () {
     // box.content = 'SELECTED LICENSE ITEM' + ' - ' + this.selected + ' - ' + licensearray[this.selected][0] + ' - ' + Math.min(this.selected+10,this.items.length+1);
     licensetable.select(Math.min(this.selected + 10, this.items.length));
@@ -658,6 +722,9 @@ licensetable.key(['space'], function (data) {
 //     this.enterSelected(); // Emit select and action event
 // });
 
+
+// Navigate between modal boxes with display*() functions
+
 function displayContent(content) {
     let pretty_content = JSON.stringify(content, null, 4);
     box.scrollTo(0);
@@ -679,6 +746,7 @@ function displayForm(data) {
     formsectiontitle.setValue(readmeContent[data].name);
     formsectioneditor.setValue(readmeContent[data].description);
     formwindow.data['sectionbeingedited'] = data;
+    readmeContent[data].value?formenabledcheckbox.check():formenabledcheckbox.uncheck();
     formwindow.show();
     formsectioneditor.focus();
     screen.render();
@@ -795,7 +863,7 @@ desktop.append(alertbox);
 desktop.append(licensetable);
 formwindow.hide();
 licensetable.hide();
-screen.title = 'ecommerce db test TUI';
+screen.title = 'Readme Generator TUI';
 
 // quit
 screen.key(['escape', 'q', 'C-c'], function (ch, key) {
