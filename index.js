@@ -19,6 +19,11 @@ let blessed = require("blessed");
 // screen = blessed.screen();
 let screen = new blessed.screen();
 
+const fs = require('fs');
+let licenses;
+
+licenses = JSON.parse(fs.readFileSync('licenses.json'));
+
 const readmetemplate = {
     title: {
         name: "Title",
@@ -97,16 +102,22 @@ function generateReadme() {
             readmeString += `- [${readmeContent[elem].name}](#${readmeContent[elem].name})\n`;
         };
     });
+    readmeString += '\n\n';
 
+    // Add section contents
     Object.keys(readmeContent).forEach(elem => {
         if (readmeContent[elem].value) {
             readmeString += `## ${readmeContent[elem].name}\n\n${readmeContent[elem].description}\n\n`;
         };
     });
-
     readmeString += '\n\n';
+
     return readmeString;
 };
+
+
+// Get a list of open source licenses
+// https://api.opensource.org/licenses/
 
 const APIURL = 'http://localhost:3001';
 
@@ -210,9 +221,9 @@ class Separator {
 // Menu Choices in inquirer format
 let choices = [
     {
-        name: "display",
-        value: "display",
-        description: "Display current README content",
+        name: "refresh display",
+        value: "refresh display",
+        description: "Refresh the current README content on the left box",
     },
     new Separator(), // common sections in README files
     {
@@ -278,6 +289,11 @@ let choices = [
     },
     new Separator(),
     {
+        name: "select license",
+        value: "select license",
+        description: "Select a license from a list of Open Source Licenses",
+    },
+    {
         name: "edit",
         value: "edit",
         description: "Edit the text for your README",
@@ -300,11 +316,9 @@ let choices = [
 ];
 
 let flatchoices = choices.map((elem) => {
-    //    console.log(elem.name);
     return elem.name;
 });
 
-//console.log("FLAT CHOICES:", flatchoices);
 
 // Side Menu
 const sideMenu = blessed.list({
@@ -480,8 +494,6 @@ var msg = blessed.message({
 });
 
 // Form Event management
-
-
 formsubmit.on('press', function () {
     formwindow.submit();
 });
@@ -546,6 +558,98 @@ const alertbox = blessed.question({
     }
 });
 
+
+// Licenses table
+const licensetable = blessed.listtable({
+    top: 'center',
+    left: 'center',
+    width: '90%',
+    height: '80%',
+    content: 'Licenses',
+    tags: true,
+    shadow: true,
+    keys: true,
+    border: {
+        type: 'line'
+    },
+    style: {
+        fg: 'yellow',
+        bg: 'blue',
+        border: {
+            fg: 'yellow'
+        },
+        header: {
+            fg: 'black',
+            bg: 'white'
+        },
+        selected: {
+            fg: 'black',
+            bg: 'cyan'
+        },
+        item: {
+            fg: 'yellow',
+            bg: 'blue'
+        },
+        focus: {
+            border: {
+                fg: 'white',
+                bg: 'blue'
+            }
+        },
+        hover: {
+            bg: 'blue'
+        }
+    }
+});
+
+// set data on table
+let licensearray = [['Identifier', 'License', 'Popular', 'Permissive']];
+licenses.forEach(elem => {
+    //console.log([elem.id, elem.name, elem.keywords.includes('popular') ? "yes":"", elem.keywords.includes('permissive') ? "yes":"", elem.keywords.includes('discouraged') ? "yes":"" ]);
+    if (!elem.keywords.includes('discouraged')) {
+        licensearray.push([elem.id, elem.name, elem.keywords.includes('popular') ? "yes" : "", elem.keywords.includes('permissive') ? "yes" : ""]);
+    };
+});
+
+licensetable.setData(licensearray);
+
+
+licensetable.key(["pagedown"], function () {
+    // box.content = 'SELECTED LICENSE ITEM' + ' - ' + this.selected + ' - ' + licensearray[this.selected][0] + ' - ' + Math.min(this.selected+10,this.items.length+1);
+    licensetable.select(Math.min(this.selected + 10, this.items.length));
+    screen.render();
+});
+
+licensetable.key(["pageup"], function () {
+    // box.content = 'SELECTED LICENSE ITEM' + ' - ' + this.selected + ' - ' + licensearray[this.selected][0] + ' - ' + Math.max(this.selected-10,2);
+    licensetable.select(Math.max(this.selected - 10, 1));
+    screen.render();
+});
+
+// received selected event from licensetable
+licensetable.on('select', (item, selected) => {
+    // Set the license information to the readme content
+    let selectedlicense = licenses.find(elem => {
+        // box.content = 'SELECTED LICENSE ITEM' + JSON.stringify(elem) + ' - ' + elem.id + ' - ' + licensearray[selected][0];
+        return elem.id === licensearray[selected][0];
+    });
+    // box.content = 'SELECTED LICENSE ITEM' + ' - ' + JSON.stringify(selectedlicense);
+    readmeContent.license.description = `[${licensearray[selected][0]}](${selectedlicense.text[0].url}) - ${licensearray[selected][1]}`;
+    box.setContent(generateReadme());
+    licensetable.hide();
+    sideMenu.focus();
+    screen.render();
+});
+// sideMenu.key('d', () => { console.log('got an a'); });
+
+licensetable.key(['space'], function (data) {
+    // box.content = 'SELECTED LICENSE ITEM' + ' - ' + this.selected + ' - ' + licensearray[this.selected][0];
+    licensetable.select(this.selected);
+    screen.render();
+});
+
+
+
 // sideMenu.on('selected', () => { console.log('got an enter'); });
 // sideMenu.key('d', () => { console.log('got an a'); });
 
@@ -580,10 +684,24 @@ function displayForm(data) {
     screen.render();
 };
 
+function displayLicenseTable() {
+    licensetable.show();
+    licensetable.focus();
+    screen.render();
+};
+
+
 sideMenu.on('select', (async function (item, selected) {
     //box.setContent(`got an enter/select event',\nindex: ${this.selected} / ${selected};\nvalue: ${this.items[this.selected].content} / ${item.content}`);
     //await displayAlert(`got an enter/select event',\nindex: ${this.selected} / ${selected};\nvalue: ${this.items[this.selected].content} / ${item.content}`);
-    switch (this.selected) {
+    switch (this.items[this.selected].content) {
+        case "select license":
+            displayLicenseTable();
+            break;
+        case "refresh display":
+            box.setContent(generateReadme());
+            screen.render();
+            break;
         // case 0:
         //         let products;
         //         try {
@@ -611,17 +729,20 @@ sideMenu.on('select', (async function (item, selected) {
         //         };
         //         displayContent(tags);
         //         break;
-        //     case 3:
-        //         return process.exit(0);
-        //         break;
+        case "quit":
+            return process.exit(0);
+            break;
+        case "------------------":
+            // separator, ignore
+            break;
         default:
             displayForm(this.items[this.selected].content);
     };
-    console.log(
-        'got an enter/select event',
-        'index: ', this.selected, '/', selected, ';',
-        'value:', this.items[this.selected].content, '/', item.content
-    );
+    // console.log(
+    //     'got an enter/select event',
+    //     'index: ', this.selected, '/', selected, ';',
+    //     'value:', this.items[this.selected].content, '/', item.content
+    // );
 }));
 
 sideMenu.key('p', async function () {
@@ -671,7 +792,9 @@ desktop.append(box);
 desktop.append(sideMenu);
 desktop.append(formwindow);
 desktop.append(alertbox);
+desktop.append(licensetable);
 formwindow.hide();
+licensetable.hide();
 screen.title = 'ecommerce db test TUI';
 
 // quit
@@ -680,6 +803,7 @@ screen.key(['escape', 'q', 'C-c'], function (ch, key) {
 });
 
 //allow control the table with the keyboard
+// licensetable.focus();
 sideMenu.focus();
 
 // screen.render();
