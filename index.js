@@ -9,7 +9,7 @@
 // Usage:
 // Use the options to enter readme components
 // --------------------------------------------------------------------
-
+const fs = require('fs');
 
 let inquirer = require("inquirer");
 
@@ -19,10 +19,32 @@ let blessed = require("blessed");
 // screen = blessed.screen();
 let screen = new blessed.screen();
 
-const fs = require('fs');
+// Get open-source licenses (Source: https://api.opensource.org/licenses/ and https://github.com/OpenSourceOrg/licenses)
 let licenses;
+try {
+    licenses = JSON.parse(fs.readFileSync('licenses.json'));
+} catch (err) {
+    displayAlert(err);
+};
 
-licenses = JSON.parse(fs.readFileSync('licenses.json'));
+// set license data to two arrays: the popular list and the full list
+let licensearray = [['Identifier', 'License', 'Popular', 'Permissive']];
+let licensearray_full = [['Identifier', 'License', 'Popular', 'Permissive', 'Discouraged', 'Non-reusable', 'Osi-approved']];
+// Add license items into array to feed to blessed listTable
+licenses.forEach(elem => {
+    licensearray_full.push([
+        elem.id,
+        elem.name,
+        elem.keywords.includes('popular') ? "yes" : "",
+        elem.keywords.includes('permissive') ? "yes" : "",
+        elem.keywords.includes('discouraged') ? "yes" : "",
+        elem.keywords.includes('non-reusable') ? "yes" : "",
+        elem.keywords.includes('osi-approved') ? "yes" : "",
+    ]);
+    if (!elem.keywords.includes('discouraged')) {
+        licensearray.push([elem.id, elem.name, elem.keywords.includes('popular') ? "yes" : "", elem.keywords.includes('permissive') ? "yes" : ""]);
+    };
+});
 
 const readmetemplate = {
     title: {
@@ -292,6 +314,16 @@ let choices = [
         name: "select license",
         value: "select license",
         description: "Select a license from a list of Open Source Licenses",
+    },
+    {
+        name: "select license full",
+        value: "select license full",
+        description: "Select a license from a list of Open Source Licenses, including all licenses",
+    },
+    {
+        name: "populate dependencies",
+        value: "populate dependencies",
+        description: "Populate dependencies from package.json",
     },
     {
         name: "edit",
@@ -667,16 +699,6 @@ const licensetable = blessed.listtable({
     }
 });
 
-// set data on table
-let licensearray = [['Identifier', 'License', 'Popular', 'Permissive']];
-licenses.forEach(elem => {
-    //console.log([elem.id, elem.name, elem.keywords.includes('popular') ? "yes":"", elem.keywords.includes('permissive') ? "yes":"", elem.keywords.includes('discouraged') ? "yes":"" ]);
-    if (!elem.keywords.includes('discouraged')) {
-        licensearray.push([elem.id, elem.name, elem.keywords.includes('popular') ? "yes" : "", elem.keywords.includes('permissive') ? "yes" : ""]);
-    };
-});
-
-licensetable.setData(licensearray);
 
 licensetable.key(["pagedown"], function () {
     // box.content = 'SELECTED LICENSE ITEM' + ' - ' + this.selected + ' - ' + licensearray[this.selected][0] + ' - ' + Math.min(this.selected+10,this.items.length+1);
@@ -695,10 +717,18 @@ licensetable.on('select', (item, selected) => {
     // Set the license information to the readme content
     let selectedlicense = licenses.find(elem => {
         // box.content = 'SELECTED LICENSE ITEM' + JSON.stringify(elem) + ' - ' + elem.id + ' - ' + licensearray[selected][0];
-        return elem.id === licensearray[selected][0];
+        if (licensetable.isLong) {
+            return elem.id === licensearray_full[selected][0];
+        } else {
+            return elem.id === licensearray[selected][0];
+        };
     });
     // box.content = 'SELECTED LICENSE ITEM' + ' - ' + JSON.stringify(selectedlicense);
-    readmeContent.license.description = `[${licensearray[selected][0]}](${selectedlicense.text[0].url}) - ${licensearray[selected][1]}`;
+    if (licensetable.isLong) {
+        readmeContent.license.description = `[${licensearray_full[selected][0]}](${selectedlicense.text[0].url}) - ${licensearray_full[selected][1]}`;
+    } else {
+        readmeContent.license.description = `[${licensearray[selected][0]}](${selectedlicense.text[0].url}) - ${licensearray[selected][1]}`;
+    };
     box.setContent(generateReadme());
     licensetable.hide();
     sideMenu.focus();
@@ -746,30 +776,60 @@ function displayForm(data) {
     formsectiontitle.setValue(readmeContent[data].name);
     formsectioneditor.setValue(readmeContent[data].description);
     formwindow.data['sectionbeingedited'] = data;
-    readmeContent[data].value?formenabledcheckbox.check():formenabledcheckbox.uncheck();
+    readmeContent[data].value ? formenabledcheckbox.check() : formenabledcheckbox.uncheck();
     formwindow.show();
     formsectioneditor.focus();
     screen.render();
 };
 
-function displayLicenseTable() {
+function displayLicenseTable(isLong) {
+    if (isLong) {
+        licensetable.isLong = true;
+        licensetable.setData(licensearray_full);
+    } else {
+        licensetable.isLong = false;
+        licensetable.setData(licensearray);
+    };
     licensetable.show();
     licensetable.focus();
     screen.render();
 };
 
+function populateDependencies() {
+    let filedata;
+    try {
+        filedata = fs.readFileSync('package.json');
+        let dependencies = JSON.parse(filedata);
+        let dependencyString = "";
+        Object.keys(dependencies.dependencies).forEach(elem => {
+            dependencyString += `- ${elem}: ${dependencies.dependencies[elem]}\n`;
+        });
+        readmeContent.dependencies.description = dependencyString + '\n';
+    } catch (err) {
+        displayAlert(err);
+    };
+};
 
 sideMenu.on('select', (async function (item, selected) {
     //box.setContent(`got an enter/select event',\nindex: ${this.selected} / ${selected};\nvalue: ${this.items[this.selected].content} / ${item.content}`);
     //await displayAlert(`got an enter/select event',\nindex: ${this.selected} / ${selected};\nvalue: ${this.items[this.selected].content} / ${item.content}`);
     switch (this.items[this.selected].content) {
         case "select license":
-            displayLicenseTable();
+            displayLicenseTable(false);
+            break;
+        case "select license full":
+            displayLicenseTable(true);
             break;
         case "refresh display":
             box.setContent(generateReadme());
             screen.render();
             break;
+        case "populate dependencies":
+            populateDependencies();
+            box.setContent(generateReadme());
+            screen.render();
+            break;
+
         // case 0:
         //         let products;
         //         try {
