@@ -85,10 +85,10 @@ The following menu options has the following functions:
 
 ### Walkthrough Videos
 
-[Walkthrough video](https://drive.google.com/file/d/114-SoFDuNDbNX2-cEVXnBjtJzROsGvkQ/view?usp=sharing)
+[Walkthrough video](https://drive.google.com/file/d/114-SoFDuNDbNX2-cEVXnBjtJzROsGvkQ/view?usp=sharing)\
 [Walkthrough video (github)](assets/readmegenerator_walkthrough.mp4)
 
-[Markdown in browser video](https://drive.google.com/file/d/116PEoO-PiOkAfABfWxBCjz9EJp5tAejG/view?usp=sharing)
+[Markdown in browser video](https://drive.google.com/file/d/116PEoO-PiOkAfABfWxBCjz9EJp5tAejG/view?usp=sharing)\
 [Markdown in browser video (github)](assets/readmegenerator_readmelinks.mp4)
 
 ## Contributing
