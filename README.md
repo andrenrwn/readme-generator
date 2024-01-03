@@ -17,7 +17,7 @@
 
 ## Description
 
-This application will help you assemble a complete README.md for your project. It is run from the command line.
+This application will help you assemble a complete README.md for your project. It is run from the command line and uses the blessed terminal library (an implemntation of ncurses for nodejs).
 
 ## Installation
 
@@ -26,11 +26,11 @@ This application will help you assemble a complete README.md for your project. I
 
 ## Usage
 
-Start the application
+Start the application\
 $ node index.js
 
-Left window: Menu options
-RighThe right pane displays the README markdown
+Left window: Menu options\
+Righ window: The right pane displays the README markdown
 
 Use the left menu bar to choose readme sections to edit.
 
@@ -77,7 +77,6 @@ The following menu options has the following functions:
 - **populate dependencies** : Populates your **Dependencies** section from your package.json file
 - **add github username** : Adds a link to your github profile page in the **Questions** section.
 - **add e-mail** : Adds a link to your e-mail in the **Questions** section.
-
 - **refresh display** : Refreshes the right window and re-renders the markdown
 - **reset** : Resets all section information to default
 - **save** : Requests a filename and saves the data. 
