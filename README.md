@@ -8,6 +8,7 @@
 ## Table of Contents
 
 - [Description](#Description)
+- [Installation](#Installation)
 - [Usage](#Usage)
 - [Contributing](#Contributing)
 - [Questions](#Questions)
