@@ -83,62 +83,62 @@ const readmetemplate = {
     title: {
         name: "Title",
         value: false,
-        description: "Enter the title of your application",
+        description: "The Title of this Application",
     },
     // logo: {
     //     name: "Logo",
     //     value: false,
-    //     description: "Specify a logo for your application"
+    //     description: "A logo for this application"
     // },
     description: {
         name: "Description",
         value: true,
-        description: "Enter a description of your project"
+        description: "A description of this project"
     },
     repository: {
         name: "Repository",
         value: false,
-        description: "Specify your repository, ie. GitHub"
+        description: "A list of repositories where you can get this application, (ie. GitHub)"
     },
     installation: {
         name: "Installation",
         value: true,
-        description: "Document how users can install your application"
+        description: "How to install this application"
     },
     usage: {
         name: "Usage",
         value: true,
-        description: "Document how your application is used"
+        description: "How this application is used"
     },
     contributing: {
         name: "Contributing",
         value: true,
-        description: "Enter guidelines on contributing to this project"
+        description: "Guidelines on contributing to this project"
     },
     tests: {
         name: "Testing",
         value: true,
-        description: "Enter testing details"
+        description: "Testing details"
     },
     questions: {
         name: "Questions",
         value: true,
-        description: "Enter frequently asked questions"
+        description: "Frequently Asked Questions"
     },
     license: {
         name: "License",
         value: true,
-        description: "Edit the license applicable to your application"
+        description: "License applicable to this application"
     },
     dependencies: {
         name: "Dependencies",
         value: false,
-        description: "Document the dependencies of your application from package.json"
+        description: "Dependencies of this application, from package.json"
     },
     section: {
         name: "Section",
         value: false,
-        description: "Add a new section to your README file"
+        description: "A custom section for this README"
     },
 };
 
@@ -186,46 +186,6 @@ const desktop = blessed.box({
         bg: 'white'
     }
 });
-
-// // Right side markdown box - displays rendered README markdown
-// let markdown = contrib.markdown({
-//     top: '2',
-//     right: '0',
-//     width: '65%',
-//     height: '100%-2',
-//     content: generateReadme(),
-//     tags: true,
-//     shadow: true,
-//     scrollable: true,
-//     alwaysScroll: true,
-//     scrollbar: {
-//         style: {
-//             bg: 'yellow'
-//         }
-//     },
-//     keys: true,
-//     border: {
-//         type: 'line'
-//     },
-//     style: {
-//         fg: 'white',
-//         bg: 'black',
-//         border: {
-//             fg: '#f0f0f0'
-//         },
-//         focus: {
-//             border: {
-//                 fg: 'black',
-//                 bg: 'white'
-//             }
-//         },
-//         hover: {
-//             bg: 'red'
-//         }
-//     }
-// });
-
-
 
 // Right side box - displays constructed README
 // const box = blessed.box({
@@ -646,6 +606,7 @@ formcancel.on('press', function () {
 // clear all form entries
 formreset.on('press', function () {
     formwindow.reset();
+    screen.render();
 });
 // erase all form entries and set them to default
 formdefault.on('press', function () {
@@ -930,8 +891,8 @@ sideMenu.on('select', (async function (item, selected) {
             promptbox.readInput('Enter your e-mail address:', config.email, (err, value) => {
                 if (err) { displayAlert(err) }
                 else {
-                    config.email = value;
-                    readmeContent.questions.description += `\nE-mail: ${value}\nFor questions regarding this repository, please specify the repository URL.`;
+                    config.email = value.trim();
+                    readmeContent.questions.description += `\nE-mail: [${value}](mailto:${value})\nFor questions regarding this repository, please specify the repository URL.`;
                     // box.setContent(generateReadme());
                     box.setMarkdown(generateReadme());
                 };
