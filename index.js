@@ -69,15 +69,15 @@ licenses.forEach(elem => {
     };
 });
 
-// Define blessed imports only *after* inquirer use since promises may tend to complicate things as both modules take on stdin/stdout
-
-// let blessed = require("blessed"); 
-// let screen = new blessed.screen();
-
-const blessed = require('neo-blessed');   // you can use the newer 'neo-blessed' or 'blessed' depending on your preference
+// Use blessed or its fork neo-blessed
+let blessed = require("blessed");
 let screen = new blessed.screen();
 
-// contrib = require('blessed-contrib');
+// const blessed = require('neo-blessed');   // you can use the newer 'neo-blessed' or 'blessed' depending on your preference
+// let screen = new blessed.screen();
+
+contrib = require('blessed-contrib');
+
 
 const readmetemplate = {
     title: {
@@ -85,11 +85,11 @@ const readmetemplate = {
         value: false,
         description: "Enter the title of your application",
     },
-    logo: {
-        name: "Logo",
-        value: false,
-        description: "Specify a logo for your application"
-    },
+    // logo: {
+    //     name: "Logo",
+    //     value: false,
+    //     description: "Specify a logo for your application"
+    // },
     description: {
         name: "Description",
         value: true,
@@ -173,7 +173,7 @@ function generateReadme() {
 
 // List of open source licenses: https://api.opensource.org/licenses/
 
-// Background desktop container
+// Parent desktop container
 const desktop = blessed.box({
     top: '0',
     left: '0',
@@ -187,8 +187,49 @@ const desktop = blessed.box({
     }
 });
 
+// // Right side markdown box - displays rendered README markdown
+// let markdown = contrib.markdown({
+//     top: '2',
+//     right: '0',
+//     width: '65%',
+//     height: '100%-2',
+//     content: generateReadme(),
+//     tags: true,
+//     shadow: true,
+//     scrollable: true,
+//     alwaysScroll: true,
+//     scrollbar: {
+//         style: {
+//             bg: 'yellow'
+//         }
+//     },
+//     keys: true,
+//     border: {
+//         type: 'line'
+//     },
+//     style: {
+//         fg: 'white',
+//         bg: 'black',
+//         border: {
+//             fg: '#f0f0f0'
+//         },
+//         focus: {
+//             border: {
+//                 fg: 'black',
+//                 bg: 'white'
+//             }
+//         },
+//         hover: {
+//             bg: 'red'
+//         }
+//     }
+// });
+
+
+
 // Right side box - displays constructed README
-const box = blessed.box({
+// const box = blessed.box({
+const box = contrib.markdown({
     top: '2',
     right: '0',
     width: '65%',
@@ -281,11 +322,11 @@ let choices = [
         value: "repository",
         description: "Specify your Github repository",
     },
-    {
-        name: "logo",
-        value: "logo",
-        description: "Specify a logo for your application",
-    },
+    // {
+    //     name: "logo",
+    //     value: "logo",
+    //     description: "Specify a logo for your application",
+    // },
     {
         name: "dependencies",
         value: "dependencies",
@@ -430,7 +471,6 @@ const formwindow = blessed.form({
         }
     }
 });
-
 
 // Section title input
 var formsectiontitle = blessed.textbox({
@@ -590,15 +630,6 @@ var formenabledcheckbox = blessed.checkbox({
     }
 });
 
-var msg = blessed.message({
-    parent: screen,
-    top: 0,
-    left: 0,
-    style: {
-        italic: true,
-        fg: 'green'
-    }
-});
 
 // Form Event management
 // submit form
@@ -627,24 +658,14 @@ formdefault.on('press', function () {
 });
 
 formwindow.on('submit', function (data) {
-    // console.log(data);
-    // msg.display(`Value: ${data.sectionbeingedited} ${this.name}, Title: ${data.title}, Content: ${data.editor} \n`, function () {
-    //     var summary = '';
-    //     summary = `Value: ${data.sectionbeingedited} ${this.name}, Title: ${data.title}, Content: ${data.editor} \n`;
-    //     console.log(summary);
-    // });
-    // displayAlert(formwindow.data.sectionbeingedited);
-    // console.log(formwindow.data.sectionbeingedited);
     readmeContent[formwindow.data.sectionbeingedited].name = data.title;
     readmeContent[formwindow.data.sectionbeingedited].description = data.editor;
     readmeContent[formwindow.data.sectionbeingedited].value = formenabledcheckbox.checked;
-    box.setContent(generateReadme());
+    // box.setContent(generateReadme());
+    box.setMarkdown(generateReadme());
     formwindow.hide();
     sideMenu.focus();
     screen.render();
-});
-formwindow.on('reset', function () {
-    msg.display('Form cleared!', function () { });
 });
 
 // Prompt box
@@ -717,10 +738,6 @@ const alertbox = blessed.question({
         }
     }
 });
-
-// Big text box
-const bigtext = blessed.bigtext(
-);
 
 // -----------------------------------------------------------------------
 // License selection table
@@ -801,7 +818,8 @@ licensetable.on('select', (item, selected) => {
         readmeContent.license.description = `[${licensearray[selected][0]}](${selectedlicense.text[0].url}) - ${licensearray[selected][1]}`;
         readmeContent.title.description += `\n\n[![License](https://img.shields.io/badge/License-${licensearray[selected][0].replace(/[- ]/g, '_')}-blue.svg)](${selectedlicense.text[0].url})`
     };
-    box.setContent(generateReadme());
+    // box.setContent(generateReadme());
+    box.setMarkdown(generateReadme());
     licensetable.hide();
     sideMenu.focus();
     screen.render();
@@ -885,12 +903,14 @@ sideMenu.on('select', (async function (item, selected) {
             displayLicenseTable(true);
             break;
         case "refresh display":
-            box.setContent(generateReadme());
+            //box.setContent(generateReadme());
+            box.setMarkdown(generateReadme());
             screen.render();
             break;
         case "populate dependencies":
             populateDependencies();
-            box.setContent(generateReadme());
+            // box.setContent(generateReadme());
+            box.setMarkdown(generateReadme());
             screen.render();
             break;
         case "add github username":
@@ -899,7 +919,8 @@ sideMenu.on('select', (async function (item, selected) {
                 else {
                     config.githubusername = value;
                     readmeContent.questions.description += `\nGitHub profile: https://github.com/${value}\nPost your questions in the "issues" section in the GitHub repository `;
-                    box.setContent(generateReadme());
+                    // box.setContent(generateReadme());
+                    box.setMarkdown(generateReadme());
                 };
                 promptbox.hide();
                 screen.render();
@@ -911,7 +932,8 @@ sideMenu.on('select', (async function (item, selected) {
                 else {
                     config.email = value;
                     readmeContent.questions.description += `\nE-mail: ${value}\nFor questions regarding this repository, please specify the repository URL.`;
-                    box.setContent(generateReadme());
+                    // box.setContent(generateReadme());
+                    box.setMarkdown(generateReadme());
                 };
                 promptbox.hide();
                 screen.render();
@@ -937,7 +959,8 @@ sideMenu.on('select', (async function (item, selected) {
                 if (answer) {
                     // Clear all data from all sections and refresh screen
                     readmeContent = structuredClone(readmetemplate);
-                    box.setContent(generateReadme());
+                    // box.setContent(generateReadme());
+                    box.setMarkdown(generateReadme());
                 };
                 sideMenu.focus();
                 alertbox.hide();
@@ -993,6 +1016,8 @@ desktop.append(licensetable);
 formwindow.hide();
 licensetable.hide();
 screen.title = 'Readme Generator TUI';
+
+box.setMarkdown(generateReadme());
 
 // quit
 screen.key(['q', 'C-c'], function (ch, key) {

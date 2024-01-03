@@ -1,7 +1,7 @@
 const fs = require('fs');
 
 // Get open-source licenses (Source: https://api.opensource.org/licenses/ and https://github.com/OpenSourceOrg/licenses)
-const licensefile = 'licenses.json';
+const licensefile = 'assets/licenses.json';
 
 let inquirer = require("inquirer");
 
@@ -45,13 +45,11 @@ function renderLicenseLink(license) {
   };
 };
 
-// TODO: Create a function that returns the license section of README
-// Not implemented. Integrated in index.js
+// Returns the license section of README (Not implemented). Integrated in index.js 
 // If there is no license, return an empty string
 function renderLicenseSection(license) { }
 
-// TODO: Create a function to generate markdown for README
-// Not implemented. Integrated in index.js in an array of sections.
+// Create a function to generate markdown for README (Not implemented). Integrated in index.js in an array of sections.
 function generateMarkdown(data) {
   return `# ${data.title}
 
