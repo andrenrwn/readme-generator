@@ -879,7 +879,7 @@ sideMenu.on('select', (async function (item, selected) {
                 if (err) { displayAlert(err) }
                 else {
                     config.githubusername = value;
-                    readmeContent.questions.description += `\nGitHub profile: https://github.com/${value}\nPost your questions in the "issues" section in the GitHub repository `;
+                    readmeContent.questions.description += `\nGitHub profile: https://github.com/${value}\\\nPost your questions in the "issues" section in the GitHub repository.\ `;
                     // box.setContent(generateReadme());
                     box.setMarkdown(generateReadme());
                 };
@@ -892,7 +892,7 @@ sideMenu.on('select', (async function (item, selected) {
                 if (err) { displayAlert(err) }
                 else {
                     config.email = value.trim();
-                    readmeContent.questions.description += `\nE-mail: [${value}](mailto:${value})\nFor questions regarding this repository, please specify the repository URL.`;
+                    readmeContent.questions.description += `\nE-mail: [${value}](mailto:${value})\\\nFor questions regarding this repository, please specify the repository URL.\ `;
                     // box.setContent(generateReadme());
                     box.setMarkdown(generateReadme());
                 };
